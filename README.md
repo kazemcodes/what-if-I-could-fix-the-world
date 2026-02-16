@@ -1,6 +1,6 @@
 # What If I Could Fix The World?
 
-A fantasy isekai narrative following the journey of Albert, who is unexpectedly transported to the magical world of Atherfall.
+A romantic fantasy isekai narrative following the journey of Albert, who is unexpectedly transported to the magical world of Atherfall.
 
 The story is being actively developed, with new chapters being added semi-regularly.
 
