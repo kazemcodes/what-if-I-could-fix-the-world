@@ -6,4 +6,4 @@ The story is being actively developed, with new chapters being added semi-regula
 
 ## Reading the book
 
-head to the [content directory](./content/README.md) to read the story, each chapter in its own markdown file.
+head to the [content directory](./content/README.md) to read the story.
