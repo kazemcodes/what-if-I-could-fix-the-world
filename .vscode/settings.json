@@ -1,0 +1,8 @@
+{
+  "workbench.editor.labelFormat": "short",
+  "workbench.colorCustomizations": {
+    "titleBar.activeForeground": "#FFFFFF",
+    "titleBar.activeBackground": "#007ACC"
+  },
+  "workbench.editor.title": "What If I Could Fix The World"
+}
