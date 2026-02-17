@@ -171,3 +171,19 @@ Someone slides a cup across the table.
 "Rough landing?"
 
 Albert looks around, he had lucid dreamed before, but this one was too weird.
+
+**0001/01/01 AF | Early Morning**
+
+OOC: Emergency Drifter capture sequence activated. Welcome to The Last Waystation. Loading Physical Space... 
+
+You do not wake up.
+
+You realize you are already sitting.
+
+The surface beneath you is warm, solid, and not from any world you remember. Around you, voices murmur in languages you half-recognize. No one looks surprised to see you.
+
+Someone slides a cup across the table.
+
+"Rough landing?"
+
+Albert looks around, he had lucid dreamed before, but this one was too real.

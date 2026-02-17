@@ -1,22 +1,5 @@
 **0001/01/01 AF | Early Morning**
 
-OOC: Emergency Drifter capture sequence activated. Welcome to The Last Waystation. Loading Physical Space... 
-
-You do not wake up.
-
-You realize you are already sitting.
-
-The surface beneath you is warm, solid, and not from any world you remember. Around you, voices murmur in languages you half-recognize. No one looks surprised to see you.
-
-Someone slides a cup across the table.
-
-"Rough landing?"
-
-Albert looks around, he had lucid dreamed before, but this one was too real.
-
-
-**0001/01/01 AF | Early Morning**
-
 
 He blinks, and the haze sharpens just a fraction—the table under your hands is etched with faint, glowing runes that pulse like distant stars, and the air hums with a low, ethereal vibration that seeps into your bones. The murmurs around you come from scattered figures: a hooded silhouette nursing a steaming mug, a translucent form flickering like a faulty hologram, all seated at mismatched tables in this vast, floating chamber where walls shimmer with indigo voids. The place is held up by huge straight and arching supports. No windows, no doors, The vast area outside being just an endless drift of shimmering lights beyond, not much different from images of a supernova.
 
