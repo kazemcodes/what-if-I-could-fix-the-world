@@ -1,0 +1,254 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cinzel+Decorative:wght@400;700&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Cormorant+Garamond:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Fantasy Font Stack */
+  --font-heading: 'Cinzel', serif;
+  --font-heading-decorative: 'Cinzel Decorative', serif;
+  --font-body: 'Crimson Text', serif;
+  --font-ui: 'Cormorant Garamond', serif;
+  --font-mono: 'Fira Code', monospace;
+  
+  /* Fantasy Colors */
+  --bg-primary: #1a1410;
+  --bg-secondary: #2d241c;
+  --bg-card: #F4E4BC;
+  --bg-card-dark: #E8D4A8;
+  
+  --text-primary: #3D2914;
+  --text-secondary: #5D4934;
+  --text-light: #F4E4BC;
+  --text-gold: #D4AF37;
+  
+  --accent-gold: #D4AF37;
+  --accent-gold-hover: #B8860B;
+  --accent-red: #8B0000;
+  --accent-green: #228B22;
+  --accent-blue: #4169E1;
+  --accent-purple: #4B0082;
+  
+  --border-gold: #D4AF37;
+  --border-dark: #3D2914;
+  --border-light: rgba(212, 175, 55, 0.3);
+}
+
+@layer base {
+  html {
+    font-family: var(--font-body);
+    color: var(--text-primary);
+    background-color: var(--bg-primary);
+  }
+  
+  body {
+    @apply antialiased;
+    background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+    min-height: 100vh;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    @apply font-semibold tracking-wide;
+  }
+  
+  h1 {
+    @apply text-4xl md:text-5xl;
+  }
+  
+  h2 {
+    @apply text-3xl md:text-4xl;
+  }
+  
+  h3 {
+    @apply text-2xl md:text-3xl;
+  }
+  
+  h4 {
+    @apply text-xl md:text-2xl;
+  }
+  
+  p {
+    @apply leading-relaxed;
+  }
+}
+
+@layer components {
+  /* Fantasy Button */
+  .btn-fantasy {
+    @apply font-ui uppercase tracking-wider px-6 py-3 rounded transition-all duration-200;
+    font-family: var(--font-ui);
+    background: linear-gradient(180deg, var(--accent-gold) 0%, var(--accent-gold-hover) 100%);
+    border: 2px solid #8B7355;
+    color: var(--text-primary);
+    box-shadow: 
+      inset 0 1px 0 rgba(255,255,255,0.3),
+      0 2px 4px rgba(0,0,0,0.3);
+  }
+  
+  .btn-fantasy:hover {
+    background: linear-gradient(180deg, #E8C547 0%, var(--accent-gold) 100%);
+    box-shadow: 
+      inset 0 1px 0 rgba(255,255,255,0.4),
+      0 4px 8px rgba(0,0,0,0.4);
+    transform: translateY(-1px);
+  }
+  
+  .btn-fantasy:active {
+    background: linear-gradient(180deg, var(--accent-gold-hover) 0%, #8B7355 100%);
+    transform: translateY(0);
+  }
+  
+  .btn-fantasy:disabled {
+    @apply opacity-50 cursor-not-allowed;
+    transform: none;
+  }
+  
+  /* Secondary Button */
+  .btn-fantasy-secondary {
+    @apply font-ui uppercase tracking-wider px-6 py-3 rounded transition-all duration-200;
+    font-family: var(--font-ui);
+    background: transparent;
+    border: 2px solid var(--accent-gold);
+    color: var(--text-gold);
+  }
+  
+  .btn-fantasy-secondary:hover {
+    background: rgba(212, 175, 55, 0.1);
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+  }
+  
+  /* Parchment Card */
+  .card-parchment {
+    @apply relative rounded-lg p-6;
+    background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-card-dark) 100%);
+    border: 3px solid #8B7355;
+    box-shadow: 
+      inset 0 0 20px rgba(139, 115, 85, 0.1),
+      0 4px 12px rgba(0,0,0,0.3);
+  }
+  
+  .card-parchment::before {
+    content: '';
+    @apply absolute inset-0 pointer-events-none opacity-10;
+    /* background: url('/textures/parchment-noise.png'); */
+  }
+  
+  /* Dark Wood Panel */
+  .card-wood {
+    @apply relative rounded-lg p-6;
+    background: linear-gradient(180deg, #3D2914 0%, #2D241C 100%);
+    border: 3px solid #8B7355;
+    box-shadow: 
+      inset 0 2px 4px rgba(255,255,255,0.1),
+      0 4px 12px rgba(0,0,0,0.5);
+  }
+  
+  /* Fantasy Input */
+  .input-fantasy {
+    @apply w-full px-4 py-3 rounded transition-all duration-200;
+    font-family: var(--font-body);
+    background: var(--bg-card);
+    border: 2px solid #8B7355;
+    color: var(--text-primary);
+  }
+  
+  .input-fantasy:focus {
+    @apply outline-none;
+    border-color: var(--accent-gold);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.3);
+  }
+  
+  .input-fantasy::placeholder {
+    color: #8B7355;
+    @apply italic;
+  }
+  
+  /* Ornate Frame */
+  .frame-ornate {
+    border: 4px solid transparent;
+    border-image: linear-gradient(
+      135deg, 
+      #B8860B 0%, 
+      #D4AF37 25%, 
+      #FFD700 50%, 
+      #D4AF37 75%, 
+      #B8860B 100%
+    ) 1;
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+  }
+  
+  /* Gold Text */
+  .text-gold-gradient {
+    @apply font-semibold;
+    background: linear-gradient(180deg, #FFD700 0%, #D4AF37 50%, #B8860B 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  /* Section Divider */
+  .divider-fantasy {
+    @apply relative flex items-center justify-center my-8;
+  }
+  
+  .divider-fantasy::before,
+  .divider-fantasy::after {
+    content: '';
+    @apply flex-1 h-px;
+    background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
+  }
+  
+  .divider-fantasy::before {
+    @apply mr-4;
+  }
+  
+  .divider-fantasy::after {
+    @apply ml-4;
+  }
+  
+  /* Loading Shimmer */
+  .shimmer {
+    @apply relative overflow-hidden;
+    background: linear-gradient(
+      90deg,
+      var(--bg-card-dark) 0%,
+      var(--bg-card) 50%,
+      var(--bg-card-dark) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2s linear infinite;
+  }
+  
+  /* Glow Effect */
+  .glow-gold {
+    animation: glowPulse 2s ease-in-out infinite;
+  }
+}
+
+@layer utilities {
+  /* Text Shadow for Fantasy Headers */
+  .text-shadow-fantasy {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  }
+  
+  /* Scrollbar Styling */
+  .scrollbar-fantasy::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .scrollbar-fantasy::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+    border-radius: 4px;
+  }
+  
+  .scrollbar-fantasy::-webkit-scrollbar-thumb {
+    background: var(--accent-gold);
+    border-radius: 4px;
+  }
+  
+  .scrollbar-fantasy::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-gold-hover);
+  }
+}
