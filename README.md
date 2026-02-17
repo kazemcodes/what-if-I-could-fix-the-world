@@ -4,6 +4,6 @@ A romantic fantasy isekai narrative following the journey of Albert, who is unex
 
 The story is being actively developed, with new chapters being added semi-regularly.
 
-## Reading the book
+## Were the story senpai?
 
 head to the [content directory](./content/README.md) to read the story.
