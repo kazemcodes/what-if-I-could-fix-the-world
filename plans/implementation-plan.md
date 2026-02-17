@@ -1,8 +1,16 @@
 # AI RPG Platform - Implementation Plan
 
+> **For Implementation:** Use TDD methodology - write failing tests first, then implement.
+
 ## Overview
 
 This document outlines the step-by-step implementation plan for building the AI RPG Platform (Story AI Studio). The plan is organized into phases with clear deliverables and dependencies.
+
+**Key Features:**
+- Self-hosted Docker containers per user
+- Player Avatar System with stats, superpowers, and AI companion
+- MCP (Model Context Protocol) integration for AI assistant
+- FoundryVTT content import
 
 ---
 
@@ -320,7 +328,7 @@ This document outlines the step-by-step implementation plan for building the AI 
 
 ### 6.2 Stats & Progression
 
-- [ ] Implement attribute system
+- [ ] Implement attribute system (STR, DEX, INT, WIS, CHA, CON)
 - [ ] Create skill trees
 - [ ] Add XP and leveling
 - [ ] Implement stat modifiers
@@ -328,7 +336,7 @@ This document outlines the step-by-step implementation plan for building the AI 
 
 ### 6.3 Superpowers System
 
-- [ ] Create power categories
+- [ ] Create power categories (Physical, Mental, Elemental, Reality, Cosmic)
 - [ ] Implement power unlocking
 - [ ] Add power combinations
 - [ ] Create power effects
@@ -345,10 +353,11 @@ This document outlines the step-by-step implementation plan for building the AI 
 ### 6.5 MCP Integration
 
 - [ ] Implement MCP server for companion
-- [ ] Add memory tools
+- [ ] Add memory tools (search past events)
 - [ ] Create lore lookup tools
 - [ ] Implement relationship tracking
 - [ ] Add quest analysis tools
+- [ ] Create story predictor tool
 
 ### 6.6 Legacy System
 
@@ -360,10 +369,53 @@ This document outlines the step-by-step implementation plan for building the AI 
 
 ---
 
+## Phase 7: Self-Hosting Infrastructure
+
+### 7.1 Container Architecture
+
+- [ ] Create base Docker image for user containers
+- [ ] Implement container orchestration service
+- [ ] Set up container registry
+- [ ] Create container lifecycle management
+- [ ] Implement resource limits per tier
+
+### 7.2 Container Orchestration
+
+- [ ] Implement container creation on user signup
+- [ ] Create container start/stop/suspend logic
+- [ ] Add container health monitoring
+- [ ] Implement auto-scaling for active containers
+- [ ] Create container backup system
+
+### 7.3 Invite System
+
+- [ ] Create invite code generation
+- [ ] Implement invite permission system
+- [ ] Add invite acceptance flow
+- [ ] Create guest user management
+- [ ] Implement invite analytics
+
+### 7.4 BYO Server Support
+
+- [ ] Create self-hosted Docker image
+- [ ] Implement license validation
+- [ ] Add platform connection for sync
+- [ ] Create installation documentation
+- [ ] Implement update mechanism
+
+### 7.5 Container Database Models
+
+- [ ] UserContainer model (id, user_id, status, resources, config)
+- [ ] ContainerResources model (cpu, memory, storage)
+- [ ] ContainerInvite model (id, container_id, permissions, expires_at)
+- [ ] InvitePermission model (can_create_stories, can_play, can_invite)
+
+---
+
 ## Technical Debt & Maintenance
 
 ### Ongoing Tasks
-- [ ] Write unit tests for core modules
+- [ ] Write unit tests for core modules (TDD - tests first!)
 - [ ] Create integration tests
 - [ ] Set up CI/CD pipeline
 - [ ] Implement error tracking (Sentry)
@@ -439,6 +491,11 @@ This document outlines the step-by-step implementation plan for building the AI 
 - AI companions enhancing gameplay
 - Legacy system creating long-term engagement
 
+### Phase 7
+- Self-hosted containers working
+- Users can invite friends to private servers
+- BYO server option available
+
 ---
 
 ## Risk Mitigation
@@ -450,6 +507,7 @@ This document outlines the step-by-step implementation plan for building the AI 
 | Content moderation needs | AI-based filtering, user reporting |
 | FoundryVTT API changes | Version pinning, abstraction layer |
 | Performance at scale | Load testing, horizontal scaling design |
+| Container resource exhaustion | Per-container limits, auto-suspend inactive containers |
 
 ---
 
@@ -462,6 +520,7 @@ flowchart LR
     P3 --> P4[Phase 4: Media & Desktop]
     P4 --> P5[Phase 5: Advanced]
     P5 --> P6[Phase 6: Avatar System]
+    P6 --> P7[Phase 7: Self-Hosting]
     
     subgraph Critical Path
         P1
@@ -473,7 +532,8 @@ flowchart LR
         P4
         P5
         P6
+        P7
     end
 ```
 
-**Note:** Phases 4-6 can partially overlap with earlier phases once core features are stable.
+**Note:** Phases 4-7 can partially overlap with earlier phases once core features are stable.
