@@ -11,6 +11,7 @@ This document outlines the step-by-step implementation plan for building the AI 
 - Player Avatar System with stats, superpowers, and AI companion
 - MCP (Model Context Protocol) integration for AI assistant
 - FoundryVTT content import
+- **Fantasy UI Design System** - Medieval/fantasy themed interface
 
 ---
 
@@ -34,6 +35,19 @@ This document outlines the step-by-step implementation plan for building the AI 
 - [ ] Set up component library foundation (shadcn/ui or similar)
 - [ ] Configure environment variables
 
+#### Fantasy UI Design System Setup
+- [ ] Install fantasy fonts (Cinzel, Cinzel Decorative, Crimson Text, Cormorant Garamond, Fira Code)
+- [ ] Create CSS custom properties for fantasy color palette
+- [ ] Create parchment and leather texture assets
+- [ ] Build base fantasy button component
+- [ ] Build base fantasy card component (parchment style)
+- [ ] Build base fantasy input component
+- [ ] Build base fantasy modal component
+- [ ] Create ornate border/frame component
+- [ ] Build fantasy page layout component
+- [ ] Create loading shimmer animation
+- [ ] Build fantasy tooltip component
+
 #### Monorepo Setup
 - [ ] Configure monorepo structure (Turborepo or Nx)
 - [ ] Set up shared packages (types, constants, utils)
@@ -50,9 +64,9 @@ This document outlines the step-by-step implementation plan for building the AI 
 - [ ] Add password hashing (bcrypt)
 - [ ] Create user model and migrations
 
-#### Frontend Auth
-- [ ] Create login page UI
-- [ ] Create registration page UI
+#### Frontend Auth (Fantasy Styled)
+- [ ] Create fantasy-styled login page UI
+- [ ] Create fantasy-styled registration page UI
 - [ ] Implement auth context/state management
 - [ ] Create protected route middleware
 - [ ] Implement token storage and refresh
@@ -88,11 +102,11 @@ This document outlines the step-by-step implementation plan for building the AI 
 
 ### 1.5 Basic World Builder
 
-#### Creator Studio Foundation
-- [ ] Create world editor UI (basic)
-- [ ] Implement character creator (basic)
-- [ ] Add location editor
-- [ ] Create story settings panel
+#### Creator Studio Foundation (Fantasy Styled)
+- [ ] Create world editor UI (basic, fantasy themed)
+- [ ] Implement character creator (basic, fantasy styled)
+- [ ] Add location editor (fantasy styled)
+- [ ] Create story settings panel (fantasy styled)
 - [ ] Implement save/load functionality
 
 ### 1.6 Single-Player Gameplay (MVP)

@@ -11,6 +11,308 @@
 - **Multiplayer Support:** Real-time collaborative storytelling sessions
 - **Media Generation:** AI-generated images and audio for immersion
 - **Cross-Platform:** Web app + Mobile app
+- **Fantasy UI:** Immersive medieval/fantasy themed interface throughout
+
+---
+
+## Fantasy UI Design System
+
+### Overview
+
+The entire platform must use a cohesive fantasy/medieval aesthetic that immerses users in the RPG experience. Every component, font, color, and interaction should feel like part of a fantasy world.
+
+### Typography
+
+#### Primary Fonts
+
+| Purpose | Font | Style | Usage |
+|---------|------|-------|-------|
+| **Headings** | Cinzel | Serif, elegant | Page titles, section headers |
+| **Subheadings** | Cinzel Decorative | Ornate | Card titles, modal headers |
+| **Body Text** | Crimson Text | Readable serif | Story content, descriptions |
+| **UI Elements** | Cormorant Garamond | Clean serif | Buttons, labels, inputs |
+| **Code/Stats** | Fira Code | Monospace | Stats, numbers, code blocks |
+
+#### Font Loading
+
+```css
+/* Fantasy Font Stack */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cinzel+Decorative:wght@400;700&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Cormorant+Garamond:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+
+:root {
+  --font-heading: 'Cinzel', serif;
+  --font-heading-decorative: 'Cinzel Decorative', serif;
+  --font-body: 'Crimson Text', serif;
+  --font-ui: 'Cormorant Garamond', serif;
+  --font-mono: 'Fira Code', monospace;
+}
+```
+
+### Color Palette
+
+#### Primary Colors (Medieval Fantasy)
+
+| Name | Hex | Usage |
+|------|-----|-------|
+| **Parchment** | `#F4E4BC` | Background, cards |
+| **Aged Parchment** | `#E8D4A8` | Secondary backgrounds |
+| **Dark Leather** | `#3D2914` | Text, headers |
+| **Gold** | `#D4AF37` | Accents, highlights |
+| **Burnished Gold** | `#B8860B` | Hover states |
+| **Blood Red** | `#8B0000` | Danger, combat |
+| **Forest Green** | `#228B22` | Success, nature |
+| **Royal Blue** | `#4169E1` | Magic, links |
+| **Deep Purple** | `#4B0082` | Rare items, special |
+
+#### UI Element Colors
+
+```css
+:root {
+  /* Backgrounds */
+  --bg-primary: #1a1410;      /* Dark wood */
+  --bg-secondary: #2d241c;    /* Lighter wood */
+  --bg-card: #F4E4BC;         /* Parchment */
+  --bg-card-dark: #E8D4A8;    /* Aged parchment */
+  
+  /* Text */
+  --text-primary: #3D2914;    /* Dark leather */
+  --text-secondary: #5D4934;  /* Lighter leather */
+  --text-light: #F4E4BC;      /* Light text for dark backgrounds */
+  --text-gold: #D4AF37;       /* Gold accent text */
+  
+  /* Accents */
+  --accent-gold: #D4AF37;
+  --accent-gold-hover: #B8860B;
+  --accent-red: #8B0000;
+  --accent-green: #228B22;
+  --accent-blue: #4169E1;
+  --accent-purple: #4B0082;
+  
+  /* Borders */
+  --border-gold: #D4AF37;
+  --border-dark: #3D2914;
+  --border-light: rgba(212, 175, 55, 0.3);
+}
+```
+
+### Component Styles
+
+#### Buttons
+
+```css
+/* Fantasy Button Styles */
+.btn-fantasy {
+  font-family: var(--font-ui);
+  background: linear-gradient(180deg, #D4AF37 0%, #B8860B 100%);
+  border: 2px solid #8B7355;
+  border-radius: 4px;
+  color: #3D2914;
+  padding: 0.75rem 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  box-shadow: 
+    inset 0 1px 0 rgba(255,255,255,0.3),
+    0 2px 4px rgba(0,0,0,0.3);
+  transition: all 0.2s ease;
+}
+
+.btn-fantasy:hover {
+  background: linear-gradient(180deg, #E8C547 0%, #D4AF37 100%);
+  box-shadow: 
+    inset 0 1px 0 rgba(255,255,255,0.4),
+    0 4px 8px rgba(0,0,0,0.4);
+}
+
+.btn-fantasy:active {
+  background: linear-gradient(180deg, #B8860B 0%, #8B7355 100%);
+}
+```
+
+#### Cards
+
+```css
+/* Parchment Card */
+.card-parchment {
+  background: linear-gradient(135deg, #F4E4BC 0%, #E8D4A8 100%);
+  border: 3px solid #8B7355;
+  border-radius: 8px;
+  box-shadow: 
+    inset 0 0 20px rgba(139, 115, 85, 0.1),
+    0 4px 12px rgba(0,0,0,0.3);
+  position: relative;
+}
+
+.card-parchment::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('/textures/parchment-noise.png');
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+/* Dark Wood Panel */
+.card-wood {
+  background: linear-gradient(180deg, #3D2914 0%, #2D241C 100%);
+  border: 3px solid #8B7355;
+  border-radius: 8px;
+  box-shadow: 
+    inset 0 2px 4px rgba(255,255,255,0.1),
+    0 4px 12px rgba(0,0,0,0.5);
+}
+```
+
+#### Inputs
+
+```css
+/* Fantasy Input */
+.input-fantasy {
+  font-family: var(--font-body);
+  background: #F4E4BC;
+  border: 2px solid #8B7355;
+  border-radius: 4px;
+  padding: 0.75rem 1rem;
+  color: #3D2914;
+  transition: all 0.2s ease;
+}
+
+.input-fantasy:focus {
+  outline: none;
+  border-color: #D4AF37;
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.3);
+}
+
+.input-fantasy::placeholder {
+  color: #8B7355;
+  font-style: italic;
+}
+```
+
+### Decorative Elements
+
+#### Borders & Frames
+
+```css
+/* Ornate Gold Frame */
+.frame-ornate {
+  border: 4px solid transparent;
+  border-image: linear-gradient(
+    135deg, 
+    #B8860B 0%, 
+    #D4AF37 25%, 
+    #FFD700 50%, 
+    #D4AF37 75%, 
+    #B8860B 100%
+  ) 1;
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+}
+
+/* Corner Decorations */
+.corner-decoration {
+  position: relative;
+}
+
+.corner-decoration::before,
+.corner-decoration::after {
+  content: '✦';
+  position: absolute;
+  color: #D4AF37;
+  font-size: 1.5rem;
+}
+
+.corner-decoration::before { top: -0.5rem; left: -0.5rem; }
+.corner-decoration::after { bottom: -0.5rem; right: -0.5rem; }
+```
+
+#### Icons & Symbols
+
+| Element | Unicode | Usage |
+|---------|---------|-------|
+| Sword | ⚔️ | Combat, attack |
+| Shield | 🛡️ | Defense, protection |
+| Scroll | 📜 | Documents, lore |
+| Star | ✦ | Special items |
+| Diamond | ◆ | Premium features |
+| Crown | 👑 | Admin, master |
+| Fire | 🔥 | Magic, power |
+| Heart | ❤️ | Health, love |
+
+### Page Layouts
+
+#### Main Layout Structure
+
+```
+┌─────────────────────────────────────────────────┐
+│  ╔═══════════════════════════════════════════╗  │
+│  ║           HEADER (Dark Wood)              ║  │
+│  ║  [Logo]  [Nav Items]        [User Menu]   ║  │
+│  ╚═══════════════════════════════════════════╝  │
+│  ┌─────────────────────────────────────────┐    │
+│  │                                         │    │
+│  │         MAIN CONTENT AREA               │    │
+│  │         (Parchment Background)          │    │
+│  │                                         │    │
+│  │    ┌─────────┐  ┌─────────┐            │    │
+│  │    │  Card   │  │  Card   │            │    │
+│  │    └─────────┘  └─────────┘            │    │
+│  │                                         │    │
+│  └─────────────────────────────────────────┘    │
+│  ╔═══════════════════════════════════════════╗  │
+│  ║           FOOTER (Dark Wood)              ║  │
+│  ╚═══════════════════════════════════════════╝  │
+└─────────────────────────────────────────────────┘
+```
+
+### Animation & Transitions
+
+```css
+/* Fantasy Transitions */
+:root {
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+}
+
+/* Fade in with scale */
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Glow pulse for magical elements */
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 5px rgba(212, 175, 55, 0.5); }
+  50% { box-shadow: 0 0 20px rgba(212, 175, 55, 0.8); }
+}
+
+/* Shimmer effect for loading */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+```
+
+### Texture Assets
+
+| Texture | Usage | File |
+|---------|-------|------|
+| Parchment noise | Card backgrounds | `/textures/parchment-noise.png` |
+| Leather grain | Dark panels | `/textures/leather-grain.png` |
+| Gold foil | Accents | `/textures/gold-foil.png` |
+| Paper edge | Card borders | `/textures/paper-edge.png` |
+
+### Responsive Considerations
+
+- Maintain fantasy aesthetic at all breakpoints
+- Use relative units (rem) for scalability
+- Ensure text remains readable on textured backgrounds
+- Test color contrast for accessibility
 
 ---
 
