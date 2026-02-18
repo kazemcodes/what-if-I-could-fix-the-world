@@ -4,57 +4,50 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-interface User {
+interface Story {
   id: string;
-  email: string;
-  username: string;
-  display_name: string | null;
-  subscription_tier: string;
-  player_level: number;
-  player_xp: number;
-  monthly_credits: number;
-  credits_used: number;
+  title: string;
+  description: string;
+  is_public: boolean;
+  play_count: number;
+  created_at: string;
 }
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [stories, setStories] = useState<Story[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const token = localStorage.getItem("access_token");
-      
-      if (!token) {
-        router.push("/auth/login");
-        return;
-      }
-
+    const fetchStories = async () => {
       try {
-        const response = await fetch("http://localhost:8000/api/v1/auth/me", {
+        const token = localStorage.getItem("access_token");
+        if (!token) {
+          router.push("/auth/login");
+          return;
+        }
+
+        const response = await fetch("http://localhost:8000/api/v1/stories", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
         if (!response.ok) {
-          throw new Error("Failed to fetch user");
+          throw new Error("Failed to fetch stories");
         }
 
         const data = await response.json();
-        setUser(data);
+        setStories(data.stories || []);
       } catch (err) {
-        setError("Session expired. Please login again.");
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("refresh_token");
-        setTimeout(() => router.push("/auth/login"), 2000);
+        setError(err instanceof Error ? err.message : "An error occurred");
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     };
 
-    fetchUser();
+    fetchStories();
   }, [router]);
 
   const handleLogout = () => {
@@ -63,134 +56,161 @@ export default function DashboardPage() {
     router.push("/");
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-fantasy-parchment to-fantasy-stone">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-fantasy-gold mx-auto mb-4"></div>
-          <p className="font-serif text-fantasy-ink">Loading your legend...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-fantasy-parchment to-fantasy-stone">
-        <div className="fantasy-card p-8 text-center">
-          <p className="font-serif text-red-800">{error}</p>
+      <div className="min-h-screen bg-fantasy-bg-primary flex items-center justify-center">
+        <div className="text-fantasy-gold text-xl animate-pulse">
+          Loading your adventures...
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-fantasy-parchment to-fantasy-stone">
+    <div className="min-h-screen bg-fantasy-bg-primary">
       {/* Header */}
-      <header className="border-b border-fantasy-gold/30 bg-fantasy-parchment/80 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="font-cinzel text-2xl text-fantasy-gold">
+      <header className="border-b-2 border-fantasy-border-dark bg-fantasy-bg-secondary">
+        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+          <Link href="/" className="font-heading text-2xl text-fantasy-gold">
             Story AI Studio
           </Link>
-          <button
-            onClick={handleLogout}
-            className="fantasy-btn-secondary text-sm"
-          >
-            Leave Realm
-          </button>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/stories/browse"
+              className="text-fantasy-text-light hover:text-fantasy-gold transition-colors"
+            >
+              Browse Worlds
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="btn-fantasy-secondary text-sm"
+            >
+              Logout
+            </button>
+          </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 py-8">
+      <main className="max-w-6xl mx-auto px-4 py-8">
         {/* Welcome Section */}
-        <div className="fantasy-card p-8 mb-8">
-          <h1 className="font-cinzel text-3xl text-fantasy-gold mb-2">
-            Welcome, {user?.display_name || user?.username}!
-          </h1>
-          <p className="font-serif text-fantasy-ink/70">
-            Your adventure awaits. What story will you tell today?
-          </p>
-        </div>
-
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          {/* Level Card */}
-          <div className="fantasy-card p-6 text-center">
-            <div className="text-4xl mb-2">⚔️</div>
-            <h3 className="font-cinzel text-lg text-fantasy-gold mb-1">Level</h3>
-            <p className="font-serif text-3xl text-fantasy-ink">{user?.player_level}</p>
-            <p className="text-sm text-fantasy-ink/60 mt-1">
-              {user?.player_xp} XP
-            </p>
-          </div>
-
-          {/* Credits Card */}
-          <div className="fantasy-card p-6 text-center">
-            <div className="text-4xl mb-2">✨</div>
-            <h3 className="font-cinzel text-lg text-fantasy-gold mb-1">Credits</h3>
-            <p className="font-serif text-3xl text-fantasy-ink">
-              {user ? user.monthly_credits - user.credits_used : 0}
-            </p>
-            <p className="text-sm text-fantasy-ink/60 mt-1">
-              remaining this month
-            </p>
-          </div>
-
-          {/* Tier Card */}
-          <div className="fantasy-card p-6 text-center">
-            <div className="text-4xl mb-2">👑</div>
-            <h3 className="font-cinzel text-lg text-fantasy-gold mb-1">Tier</h3>
-            <p className="font-serif text-3xl text-fantasy-ink capitalize">
-              {user?.subscription_tier}
-            </p>
-            <p className="text-sm text-fantasy-ink/60 mt-1">
-              {user?.subscription_tier === "free" ? "Upgrade for more!" : "Premium access"}
-            </p>
+        <div className="card-wood mb-8">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="font-heading text-3xl text-fantasy-gold mb-2">
+                Your Story Forge
+              </h1>
+              <p className="text-fantasy-text-light">
+                Create worlds, build characters, and embark on adventures
+              </p>
+            </div>
+            <Link href="/stories/create" className="btn-fantasy">
+              ✦ Create New Story
+            </Link>
           </div>
         </div>
+
+        {/* Error Display */}
+        {error && (
+          <div className="card-wood border-red-800 mb-6">
+            <p className="text-red-400">{error}</p>
+          </div>
+        )}
+
+        {/* Stories Grid */}
+        {stories.length === 0 ? (
+          <div className="card-parchment text-center py-12">
+            <div className="text-6xl mb-4">📜</div>
+            <h2 className="font-heading text-2xl text-fantasy-text-primary mb-4">
+              No Stories Yet
+            </h2>
+            <p className="text-fantasy-text-secondary mb-6">
+              Begin your journey by creating your first story world
+            </p>
+            <Link href="/stories/create" className="btn-fantasy">
+              Create Your First Story
+            </Link>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {stories.map((story) => (
+              <Link
+                key={story.id}
+                href={`/stories/${story.id}`}
+                className="card-wood hover:border-fantasy-gold transition-all group"
+              >
+                <div className="flex items-start justify-between mb-3">
+                  <h3 className="font-heading text-xl text-fantasy-gold group-hover:text-amber-300 transition-colors">
+                    {story.title}
+                  </h3>
+                  {story.is_public && (
+                    <span className="text-xs bg-fantasy-green/20 text-green-400 px-2 py-1 rounded">
+                      Public
+                    </span>
+                  )}
+                </div>
+                <p className="text-fantasy-text-light text-sm line-clamp-2 mb-4">
+                  {story.description || "No description yet..."}
+                </p>
+                <div className="flex items-center justify-between text-xs text-fantasy-text-secondary">
+                  <span>🎭 {story.play_count} plays</span>
+                  <span>
+                    📅 {new Date(story.created_at).toLocaleDateString()}
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Create Story */}
-          <Link href="/stories/create" className="fantasy-card p-6 hover:border-fantasy-gold transition-colors cursor-pointer block">
-            <h3 className="font-cinzel text-xl text-fantasy-gold mb-2">
-              📜 Create New Story
-            </h3>
-            <p className="font-serif text-fantasy-ink/70">
-              Start a new adventure with AI-powered storytelling
-            </p>
-          </Link>
-
-          {/* Browse Worlds */}
-          <Link href="/stories/browse" className="fantasy-card p-6 hover:border-fantasy-gold transition-colors cursor-pointer block">
-            <h3 className="font-cinzel text-xl text-fantasy-gold mb-2">
-              🗺️ Browse Worlds
-            </h3>
-            <p className="font-serif text-fantasy-ink/70">
-              Explore community-created worlds and campaigns
-            </p>
-          </Link>
-
-          {/* My Characters */}
-          <Link href="/characters" className="fantasy-card p-6 hover:border-fantasy-gold transition-colors cursor-pointer block">
-            <h3 className="font-cinzel text-xl text-fantasy-gold mb-2">
-              🧙 My Characters
-            </h3>
-            <p className="font-serif text-fantasy-ink/70">
-              Manage your characters and their stories
-            </p>
-          </Link>
-
-          {/* Settings */}
-          <Link href="/settings" className="fantasy-card p-6 hover:border-fantasy-gold transition-colors cursor-pointer block">
-            <h3 className="font-cinzel text-xl text-fantasy-gold mb-2">
-              ⚙️ Settings
-            </h3>
-            <p className="font-serif text-fantasy-ink/70">
-              Customize your experience and manage your account
-            </p>
-          </Link>
+        <div className="mt-12">
+          <h2 className="font-heading text-2xl text-fantasy-gold mb-6">
+            Quick Actions
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Link
+              href="/stories/create"
+              className="card-wood hover:border-fantasy-gold transition-all flex items-center gap-4"
+            >
+              <div className="text-3xl">✨</div>
+              <div>
+                <h3 className="font-heading text-lg text-fantasy-gold">
+                  New Story
+                </h3>
+                <p className="text-fantasy-text-secondary text-sm">
+                  Start a new adventure
+                </p>
+              </div>
+            </Link>
+            
+            <Link
+              href="/stories/browse"
+              className="card-wood hover:border-fantasy-gold transition-all flex items-center gap-4"
+            >
+              <div className="text-3xl">🗺️</div>
+              <div>
+                <h3 className="font-heading text-lg text-fantasy-gold">
+                  Browse Worlds
+                </h3>
+                <p className="text-fantasy-text-secondary text-sm">
+                  Explore public stories
+                </p>
+              </div>
+            </Link>
+            
+            <div className="card-wood flex items-center gap-4 opacity-50">
+              <div className="text-3xl">👥</div>
+              <div>
+                <h3 className="font-heading text-lg text-fantasy-gold">
+                  Join Session
+                </h3>
+                <p className="text-fantasy-text-secondary text-sm">
+                  Coming soon
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </main>
     </div>

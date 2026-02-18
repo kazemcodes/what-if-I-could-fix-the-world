@@ -225,6 +225,25 @@
   .glow-gold {
     animation: glowPulse 2s ease-in-out infinite;
   }
+  
+  /* Fantasy Card - Main card component */
+  .fantasy-card {
+    @apply relative rounded-lg p-6;
+    background: linear-gradient(180deg, #3D2914 0%, #2D241C 100%);
+    border: 2px solid #8B7355;
+    box-shadow: 
+      inset 0 1px 0 rgba(255,255,255,0.05),
+      0 4px 12px rgba(0,0,0,0.5);
+  }
+  
+  .fantasy-card:hover {
+    border-color: #A08060;
+  }
+  
+  /* Font utility */
+  .font-fantasy {
+    font-family: var(--font-heading);
+  }
 }
 
 @layer utilities {

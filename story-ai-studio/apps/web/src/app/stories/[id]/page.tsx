@@ -1,31 +1,27 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 
 interface Story {
   id: string;
-  creator_id: string;
   title: string;
-  description: string;
+  description: string | null;
+  owner_id: string;
   world_config: {
-    name: string;
-    description: string;
-    theme: string;
-    locations: Array<{ name: string; description: string }>;
-    factions: Array<{ name: string; description: string }>;
-    npcs: Array<{ name: string; description: string }>;
+    name?: string;
+    description?: string;
+    theme?: string;
+    tone?: string;
   };
   ai_settings: {
-    model: string;
-    temperature: number;
-    narrative_style: string;
-    content_rating: string;
+    model?: string;
+    temperature?: number;
+    narrative_style?: string;
   };
-  is_public: boolean;
   tags: string[];
-  play_count: number;
+  is_public: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -33,284 +29,350 @@ interface Story {
 export default function StoryDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const storyId = params.id as string;
+
   const [story, setStory] = useState<Story | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
-    const fetchStory = async () => {
-      try {
-        const token = localStorage.getItem("access_token");
-        if (!token) {
-          router.push("/auth/login");
-          return;
-        }
+    fetchStory();
+  }, [storyId]);
 
-        const response = await fetch(
-          `http://localhost:8000/api/v1/stories/${params.id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (!response.ok) {
-          if (response.status === 404) {
-            throw new Error("Story not found");
-          }
-          throw new Error("Failed to load story");
-        }
-
-        const data = await response.json();
-        setStory(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "An error occurred");
-      } finally {
-        setIsLoading(false);
+  const fetchStory = async () => {
+    try {
+      setIsLoading(true);
+      const token = localStorage.getItem("access_token");
+      
+      if (!token) {
+        router.push("/auth/login");
+        return;
       }
-    };
 
-    if (params.id) {
-      fetchStory();
+      const response = await fetch(`http://localhost:8000/api/v1/stories/${storyId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          throw new Error("Story not found");
+        }
+        throw new Error("Failed to fetch story");
+      }
+
+      const data = await response.json();
+      setStory(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+    } finally {
+      setIsLoading(false);
     }
-  }, [params.id, router]);
+  };
 
   const handleDelete = async () => {
-    if (!story || !confirm("Are you sure you want to delete this story?")) {
+    if (!confirm("Are you sure you want to delete this story? This action cannot be undone.")) {
       return;
     }
 
     try {
+      setIsDeleting(true);
       const token = localStorage.getItem("access_token");
-      const response = await fetch(
-        `http://localhost:8000/api/v1/stories/${story.id}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
 
-      if (response.ok) {
-        router.push("/dashboard");
+      const response = await fetch(`http://localhost:8000/api/v1/stories/${storyId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete story");
       }
+
+      router.push("/dashboard");
     } catch (err) {
-      console.error("Failed to delete story:", err);
+      setError(err instanceof Error ? err.message : "An error occurred");
+    } finally {
+      setIsDeleting(false);
     }
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
+  const getThemeIcon = (theme?: string) => {
+    const icons: Record<string, string> = {
+      fantasy: "🏰",
+      scifi: "🚀",
+      horror: "👻",
+      mystery: "🔍",
+      adventure: "🗺️",
+      romance: "💕",
+    };
+    return icons[theme || ""] || "📖";
   };
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
-        <div className="text-amber-200 font-serif text-xl animate-pulse">
-          Loading story...
+      <main className="min-h-screen bg-fantasy-bg-primary flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-fantasy-gold text-4xl mb-4">⏳</div>
+          <p className="text-fantasy-text-secondary">Loading story...</p>
         </div>
-      </div>
+      </main>
     );
   }
 
-  if (error || !story) {
+  if (error && !story) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-red-400 font-serif text-xl mb-4">
-            {error || "Story not found"}
-          </div>
+      <main className="min-h-screen bg-fantasy-bg-primary flex items-center justify-center">
+        <div className="card-parchment text-center max-w-md">
+          <div className="text-6xl mb-4">📜</div>
+          <h1 className="font-heading text-2xl text-fantasy-text-primary mb-2">
+            Story Not Found
+          </h1>
+          <p className="text-fantasy-text-secondary mb-6">{error}</p>
+          <Link href="/dashboard" className="btn-fantasy">
+            Return to Tavern
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
+  if (!story) return null;
+
+  return (
+    <main className="min-h-screen bg-fantasy-bg-primary">
+      {/* Header */}
+      <header className="border-b-2 border-fantasy-border-dark bg-fantasy-bg-secondary">
+        <div className="max-w-5xl mx-auto px-4 py-6">
           <Link
             href="/dashboard"
-            className="text-amber-200 hover:text-amber-100 transition-colors"
+            className="text-fantasy-gold hover:text-amber-400 transition-colors"
           >
             ← Return to Tavern
           </Link>
-        </div>
-      </div>
-    );
-  }
 
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
-      {/* Header */}
-      <header className="border-b border-amber-900/30 bg-slate-900/80 backdrop-blur-sm">
-        <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link
-            href="/dashboard"
-            className="text-amber-200 hover:text-amber-100 transition-colors flex items-center gap-2"
-          >
-            <span>←</span>
-            <span>Return to Tavern</span>
-          </Link>
-          <div className="flex gap-3">
-            <button
-              onClick={() => router.push(`/stories/${story.id}/worldbuilder`)}
-              className="px-6 py-2 bg-gradient-to-r from-purple-700 to-purple-600 rounded-lg text-purple-50 font-serif hover:from-purple-600 hover:to-purple-500 transition-all shadow-lg"
-            >
-              🌍 World Builder
-            </button>
-            <button
-              onClick={() => router.push(`/stories/${story.id}/play`)}
-              className="px-6 py-2 bg-gradient-to-r from-green-700 to-green-600 rounded-lg text-green-50 font-serif hover:from-green-600 hover:to-green-500 transition-all shadow-lg"
-            >
-              ▶️ Play Story
-            </button>
+          <div className="flex items-start justify-between mt-4">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <span className="text-3xl">{getThemeIcon(story.world_config?.theme)}</span>
+                <h1 className="font-heading text-3xl text-fantasy-gold">
+                  {story.title}
+                </h1>
+              </div>
+              {story.world_config?.name && (
+                <p className="text-fantasy-text-secondary">
+                  🌍 {story.world_config.name}
+                </p>
+              )}
+            </div>
+
+            <div className="flex gap-2">
+              <Link
+                href={`/stories/${storyId}/sessions`}
+                className="btn-fantasy"
+              >
+                🎭 Play Now
+              </Link>
+            </div>
           </div>
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-4 py-8">
-        {/* Title Section */}
-        <div className="mb-8">
-          <div className="flex items-start justify-between">
-            <div>
-              <h1 className="text-4xl font-serif text-amber-100 mb-2">
-                {story.title}
-              </h1>
-              <div className="flex items-center gap-4 text-sm text-slate-400">
-                <span>🎭 {story.play_count} plays</span>
-                <span>
-                  📅 Created {new Date(story.created_at).toLocaleDateString()}
-                </span>
-                {story.is_public && (
-                  <span className="text-green-400">🌍 Public</span>
-                )}
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <button
-                onClick={() => router.push(`/stories/${story.id}/edit`)}
-                className="px-4 py-2 border border-amber-700/50 rounded-lg text-amber-200 hover:bg-amber-900/30 transition-colors font-serif"
-              >
-                ✏️ Edit
-              </button>
-              <button
-                onClick={handleDelete}
-                className="px-4 py-2 border border-red-700/50 rounded-lg text-red-300 hover:bg-red-900/30 transition-colors font-serif"
-              >
-                🗑️ Delete
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Tags */}
-        {story.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-6">
-            {story.tags.map((tag, index) => (
-              <span
-                key={index}
-                className="px-3 py-1 bg-amber-900/30 border border-amber-700/30 rounded-full text-amber-200 text-sm"
-              >
-                #{tag}
-              </span>
-            ))}
+      {/* Content */}
+      <div className="max-w-5xl mx-auto px-4 py-8">
+        {error && (
+          <div className="card-wood border-red-800 mb-6">
+            <p className="text-red-400">{error}</p>
           </div>
         )}
-
-        {/* Description */}
-        {story.description && (
-          <div className="mb-8 p-6 bg-gradient-to-b from-amber-900/20 to-slate-900/50 rounded-lg border border-amber-700/30">
-            <h2 className="text-xl font-serif text-amber-200 mb-3">
-              📜 Description
-            </h2>
-            <p className="text-slate-300 whitespace-pre-wrap">
-              {story.description}
-            </p>
-          </div>
-        )}
-
-        {/* World Config */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <div className="p-6 bg-gradient-to-b from-amber-900/20 to-slate-900/50 rounded-lg border border-amber-700/30">
-            <h2 className="text-xl font-serif text-amber-200 mb-3">🗺️ World</h2>
-            {story.world_config.name ? (
-              <>
-                <h3 className="text-lg text-amber-100 mb-2">
-                  {story.world_config.name}
-                </h3>
-                <p className="text-slate-400 text-sm mb-2">
-                  Theme: {story.world_config.theme}
-                </p>
-                {story.world_config.description && (
-                  <p className="text-slate-300 text-sm">
-                    {story.world_config.description}
-                  </p>
-                )}
-              </>
-            ) : (
-              <p className="text-slate-400 italic">No world configured yet</p>
-            )}
-          </div>
-
-          <div className="p-6 bg-gradient-to-b from-amber-900/20 to-slate-900/50 rounded-lg border border-amber-700/30">
-            <h2 className="text-xl font-serif text-amber-200 mb-3">🧙 AI Settings</h2>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-slate-400">Model:</span>
-                <span className="text-amber-100">{story.ai_settings.model}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-400">Creativity:</span>
-                <span className="text-amber-100">
-                  {story.ai_settings.temperature.toFixed(1)}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-400">Style:</span>
-                <span className="text-amber-100">
-                  {story.ai_settings.narrative_style}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-400">Rating:</span>
-                <span className="text-amber-100">
-                  {story.ai_settings.content_rating}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <button
-            onClick={() => router.push(`/stories/${story.id}/characters`)}
-            className="p-6 bg-gradient-to-b from-purple-900/30 to-slate-900/50 rounded-lg border border-purple-700/30 hover:border-purple-500/50 transition-colors text-left"
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <Link
+            href={`/stories/${storyId}/characters`}
+            className="fantasy-card text-center hover:scale-[1.02] transition-transform"
           >
             <div className="text-3xl mb-2">👤</div>
-            <h3 className="text-lg font-serif text-purple-200 mb-1">
-              Characters
-            </h3>
-            <p className="text-slate-400 text-sm">
-              Manage your story's characters
-            </p>
-          </button>
+            <h3 className="font-heading text-fantasy-gold">Characters</h3>
+            <p className="text-fantasy-text-secondary text-sm">Manage heroes & NPCs</p>
+          </Link>
 
-          <button
-            onClick={() => router.push(`/stories/${story.id}/locations`)}
-            className="p-6 bg-gradient-to-b from-blue-900/30 to-slate-900/50 rounded-lg border border-blue-700/30 hover:border-blue-500/50 transition-colors text-left"
+          <Link
+            href={`/stories/${storyId}/locations`}
+            className="fantasy-card text-center hover:scale-[1.02] transition-transform"
           >
-            <div className="text-3xl mb-2">🏰</div>
-            <h3 className="text-lg font-serif text-blue-200 mb-1">Locations</h3>
-            <p className="text-slate-400 text-sm">
-              Explore and add locations
-            </p>
-          </button>
+            <div className="text-3xl mb-2">🗺️</div>
+            <h3 className="font-heading text-fantasy-gold">Locations</h3>
+            <p className="text-fantasy-text-secondary text-sm">Explore the world</p>
+          </Link>
 
-          <button
-            onClick={() => router.push(`/stories/${story.id}/sessions`)}
-            className="p-6 bg-gradient-to-b from-green-900/30 to-slate-900/50 rounded-lg border border-green-700/30 hover:border-green-500/50 transition-colors text-left"
+          <Link
+            href={`/stories/${storyId}/sessions`}
+            className="fantasy-card text-center hover:scale-[1.02] transition-transform"
           >
-            <div className="text-3xl mb-2">🎮</div>
-            <h3 className="text-lg font-serif text-green-200 mb-1">
-              Sessions
-            </h3>
-            <p className="text-slate-400 text-sm">
-              View play sessions and history
-            </p>
-          </button>
+            <div className="text-3xl mb-2">🎭</div>
+            <h3 className="font-heading text-fantasy-gold">Sessions</h3>
+            <p className="text-fantasy-text-secondary text-sm">Play adventures</p>
+          </Link>
+
+          <Link
+            href={`/stories/${storyId}/worldbuilder`}
+            className="fantasy-card text-center hover:scale-[1.02] transition-transform"
+          >
+            <div className="text-3xl mb-2">🧙</div>
+            <h3 className="font-heading text-fantasy-gold">World Builder</h3>
+            <p className="text-fantasy-text-secondary text-sm">Craft your world</p>
+          </Link>
         </div>
-      </main>
-    </div>
+
+        {/* Story Details */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Main Info */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Description */}
+            <div className="card-parchment">
+              <h2 className="font-heading text-xl text-fantasy-text-primary mb-4">
+                📜 Description
+              </h2>
+              <p className="text-fantasy-text-secondary">
+                {story.description || "No description provided. Add one to bring your story to life!"}
+              </p>
+            </div>
+
+            {/* World Configuration */}
+            <div className="card-parchment">
+              <h2 className="font-heading text-xl text-fantasy-text-primary mb-4">
+                🌍 World Configuration
+              </h2>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-fantasy-text-secondary text-sm">Theme</label>
+                  <p className="text-fantasy-text-primary">
+                    {story.world_config?.theme || "Not set"}
+                  </p>
+                </div>
+                <div>
+                  <label className="text-fantasy-text-secondary text-sm">Tone</label>
+                  <p className="text-fantasy-text-primary">
+                    {story.world_config?.tone || "Not set"}
+                  </p>
+                </div>
+              </div>
+              {story.world_config?.description && (
+                <div className="mt-4">
+                  <label className="text-fantasy-text-secondary text-sm">World Description</label>
+                  <p className="text-fantasy-text-primary mt-1">
+                    {story.world_config.description}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Sidebar */}
+          <div className="space-y-6">
+            {/* Tags */}
+            <div className="card-wood">
+              <h2 className="font-heading text-lg text-fantasy-gold mb-3">
+                🏷️ Tags
+              </h2>
+              {story.tags.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {story.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="bg-fantasy-bg-primary/50 text-fantasy-text-light px-3 py-1 rounded-full text-sm"
+                    >
+                      #{tag}
+                    </span>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-fantasy-text-secondary text-sm">No tags</p>
+              )}
+            </div>
+
+            {/* AI Settings */}
+            <div className="card-wood">
+              <h2 className="font-heading text-lg text-fantasy-gold mb-3">
+                🧙 AI Settings
+              </h2>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-fantasy-text-secondary">Model</span>
+                  <span className="text-fantasy-text-light">
+                    {story.ai_settings?.model || "gpt-4o"}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-fantasy-text-secondary">Temperature</span>
+                  <span className="text-fantasy-text-light">
+                    {story.ai_settings?.temperature || 0.7}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-fantasy-text-secondary">Style</span>
+                  <span className="text-fantasy-text-light">
+                    {story.ai_settings?.narrative_style || "descriptive"}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Metadata */}
+            <div className="card-wood">
+              <h2 className="font-heading text-lg text-fantasy-gold mb-3">
+                📅 Details
+              </h2>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-fantasy-text-secondary">Created</span>
+                  <span className="text-fantasy-text-light">
+                    {formatDate(story.created_at)}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-fantasy-text-secondary">Updated</span>
+                  <span className="text-fantasy-text-light">
+                    {formatDate(story.updated_at)}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-fantasy-text-secondary">Visibility</span>
+                  <span className="text-fantasy-text-light">
+                    {story.is_public ? "🌐 Public" : "🔒 Private"}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Danger Zone */}
+            <div className="card-wood border-red-900">
+              <h2 className="font-heading text-lg text-red-400 mb-3">
+                ⚠️ Danger Zone
+              </h2>
+              <button
+                onClick={handleDelete}
+                disabled={isDeleting}
+                className="w-full bg-red-900/50 hover:bg-red-800 text-red-200 py-2 px-4 rounded-lg transition-colors disabled:opacity-50"
+              >
+                {isDeleting ? "Deleting..." : "Delete Story"}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
   );
 }

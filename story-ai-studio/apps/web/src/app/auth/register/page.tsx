@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -13,8 +13,8 @@ export default function RegisterPage() {
     confirmPassword: "",
     display_name: "",
   });
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({
@@ -23,49 +23,21 @@ export default function RegisterPage() {
     }));
   };
 
-  const validateForm = () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match");
-      return false;
+      return;
     }
 
     if (formData.password.length < 8) {
       setError("Password must be at least 8 characters");
-      return false;
-    }
-
-    if (!/[A-Z]/.test(formData.password)) {
-      setError("Password must contain at least one uppercase letter");
-      return false;
-    }
-
-    if (!/[a-z]/.test(formData.password)) {
-      setError("Password must contain at least one lowercase letter");
-      return false;
-    }
-
-    if (!/\d/.test(formData.password)) {
-      setError("Password must contain at least one number");
-      return false;
-    }
-
-    if (!/^[a-zA-Z0-9_]+$/.test(formData.username)) {
-      setError("Username can only contain letters, numbers, and underscores");
-      return false;
-    }
-
-    return true;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-
-    if (!validateForm()) {
       return;
     }
 
-    setLoading(true);
+    setIsLoading(true);
 
     try {
       const response = await fetch("http://localhost:8000/api/v1/auth/register", {
@@ -77,7 +49,7 @@ export default function RegisterPage() {
           email: formData.email,
           username: formData.username,
           password: formData.password,
-          display_name: formData.display_name || formData.username,
+          display_name: formData.display_name || undefined,
         }),
       });
 
@@ -107,200 +79,140 @@ export default function RegisterPage() {
         router.push("/auth/login");
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Registration failed");
+      setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-fantasy-parchment to-fantasy-stone py-12">
-      <div className="w-full max-w-md px-4">
-        {/* Fantasy Card */}
-        <div className="fantasy-card p-8">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="font-cinzel text-3xl text-fantasy-gold mb-2">
-              Create Your Legend
-            </h1>
-            <p className="font-serif text-fantasy-ink/70">
-              Begin your adventure today
-            </p>
+    <main className="min-h-screen bg-fantasy-bg-primary flex items-center justify-center px-4 py-8">
+      <div className="w-full max-w-md">
+        {/* Logo */}
+        <div className="text-center mb-8">
+          <Link href="/" className="font-heading text-3xl text-fantasy-gold">
+            Story AI Studio
+          </Link>
+          <div className="divider-fantasy mt-4">
+            <span className="text-fantasy-gold">✦</span>
           </div>
+        </div>
 
-          {/* Error Message */}
+        {/* Register Card */}
+        <div className="card-parchment">
+          <h1 className="font-heading text-2xl text-fantasy-text-primary text-center mb-6">
+            Begin Your Journey
+          </h1>
+
           {error && (
-            <div className="mb-6 p-4 bg-red-900/20 border border-red-800 rounded-lg text-red-200 text-sm">
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
               {error}
             </div>
           )}
 
-          {/* Register Form */}
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label 
-                htmlFor="email" 
-                className="block font-serif text-fantasy-ink mb-2"
-              >
-                Email Address
+              <label className="block text-fantasy-text-secondary mb-1 font-ui">
+                Email <span className="text-red-600">*</span>
               </label>
               <input
-                id="email"
-                name="email"
                 type="email"
+                name="email"
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className="fantasy-input w-full"
-                placeholder="adventurer@realm.com"
+                className="input-fantasy"
+                placeholder="adventurer@example.com"
               />
             </div>
 
             <div>
-              <label 
-                htmlFor="username" 
-                className="block font-serif text-fantasy-ink mb-2"
-              >
-                Username
+              <label className="block text-fantasy-text-secondary mb-1 font-ui">
+                Username <span className="text-red-600">*</span>
               </label>
               <input
-                id="username"
-                name="username"
                 type="text"
+                name="username"
                 value={formData.username}
                 onChange={handleChange}
                 required
                 minLength={3}
-                maxLength={50}
-                className="fantasy-input w-full"
+                maxLength={30}
+                className="input-fantasy"
                 placeholder="legendaryhero"
               />
-              <p className="mt-1 text-xs text-fantasy-ink/50">
-                Letters, numbers, and underscores only
-              </p>
             </div>
 
             <div>
-              <label 
-                htmlFor="display_name" 
-                className="block font-serif text-fantasy-ink mb-2"
-              >
-                Display Name <span className="text-fantasy-ink/50">(optional)</span>
+              <label className="block text-fantasy-text-secondary mb-1 font-ui">
+                Display Name
               </label>
               <input
-                id="display_name"
-                name="display_name"
                 type="text"
+                name="display_name"
                 value={formData.display_name}
                 onChange={handleChange}
-                maxLength={100}
-                className="fantasy-input w-full"
+                className="input-fantasy"
                 placeholder="The Legendary Hero"
               />
             </div>
 
             <div>
-              <label 
-                htmlFor="password" 
-                className="block font-serif text-fantasy-ink mb-2"
-              >
-                Password
+              <label className="block text-fantasy-text-secondary mb-1 font-ui">
+                Password <span className="text-red-600">*</span>
               </label>
               <input
-                id="password"
-                name="password"
                 type="password"
+                name="password"
                 value={formData.password}
                 onChange={handleChange}
                 required
                 minLength={8}
-                className="fantasy-input w-full"
+                className="input-fantasy"
                 placeholder="••••••••"
               />
-              <p className="mt-1 text-xs text-fantasy-ink/50">
-                Min 8 chars, with uppercase, lowercase, and number
+              <p className="text-xs text-fantasy-text-secondary mt-1 italic">
+                At least 8 characters with uppercase, lowercase, and number
               </p>
             </div>
 
             <div>
-              <label 
-                htmlFor="confirmPassword" 
-                className="block font-serif text-fantasy-ink mb-2"
-              >
-                Confirm Password
+              <label className="block text-fantasy-text-secondary mb-1 font-ui">
+                Confirm Password <span className="text-red-600">*</span>
               </label>
               <input
-                id="confirmPassword"
-                name="confirmPassword"
                 type="password"
+                name="confirmPassword"
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 required
-                className="fantasy-input w-full"
+                className="input-fantasy"
                 placeholder="••••••••"
               />
             </div>
 
             <button
               type="submit"
-              disabled={loading}
-              className="fantasy-btn w-full"
+              disabled={isLoading}
+              className="btn-fantasy w-full"
             >
-              {loading ? (
-                <span className="flex items-center justify-center gap-2">
-                  <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                    <circle 
-                      className="opacity-25" 
-                      cx="12" 
-                      cy="12" 
-                      r="10" 
-                      stroke="currentColor" 
-                      strokeWidth="4"
-                      fill="none"
-                    />
-                    <path 
-                      className="opacity-75" 
-                      fill="currentColor" 
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                    />
-                  </svg>
-                  Creating Legend...
-                </span>
-              ) : (
-                "Begin Your Legend"
-              )}
+              {isLoading ? "Creating Account..." : "Create Account"}
             </button>
           </form>
 
-          {/* Divider */}
-          <div className="my-6 flex items-center gap-4">
-            <div className="flex-1 h-px bg-fantasy-gold/30" />
-            <span className="font-serif text-fantasy-ink/50 text-sm">or</span>
-            <div className="flex-1 h-px bg-fantasy-gold/30" />
+          <div className="mt-6 text-center">
+            <p className="text-fantasy-text-secondary text-sm">
+              Already have an account?{" "}
+              <Link
+                href="/auth/login"
+                className="text-fantasy-gold hover:text-amber-400 transition-colors"
+              >
+                Sign in
+              </Link>
+            </p>
           </div>
-
-          {/* Login Link */}
-          <p className="text-center font-serif text-fantasy-ink/70">
-            Already have a legend?{" "}
-            <Link 
-              href="/auth/login" 
-              className="text-fantasy-gold hover:text-fantasy-gold-light transition-colors"
-            >
-              Return to the realm
-            </Link>
-          </p>
-        </div>
-
-        {/* Back to Home */}
-        <div className="mt-6 text-center">
-          <Link 
-            href="/" 
-            className="font-serif text-fantasy-ink/60 hover:text-fantasy-gold transition-colors"
-          >
-            ← Return to the Tavern
-          </Link>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
