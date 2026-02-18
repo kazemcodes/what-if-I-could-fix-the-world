@@ -64,15 +64,6 @@ class StoryResponse(BaseModel):
     model_config = {"from_attributes": True}
 
 
-class StoryListResponse(BaseModel):
-    """Response for a list of stories."""
-    stories: list[StoryResponse]
-    total: int
-    page: int
-    page_size: int
-    total_pages: int
-
-
 class StorySummary(BaseModel):
     """Summary of a story for listings."""
     id: str
@@ -85,3 +76,12 @@ class StorySummary(BaseModel):
     created_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+class StoryListResponse(BaseModel):
+    """Response for a list of stories."""
+    stories: list[StorySummary]
+    total: int
+    page: int
+    page_size: int
+    total_pages: int

@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function HomePage() {
   return (
     <main className="min-h-screen flex flex-col items-center justify-center p-8">
@@ -32,12 +34,12 @@ export default function HomePage() {
 
       {/* CTA Buttons */}
       <div className="flex flex-col sm:flex-row gap-4 mt-12">
-        <button className="btn-fantasy text-lg">
+        <Link href="/auth/register" className="btn-fantasy text-lg">
           Start Your Journey
-        </button>
-        <button className="btn-fantasy-secondary text-lg">
+        </Link>
+        <Link href="/auth/login" className="btn-fantasy-secondary text-lg">
           Learn More
-        </button>
+        </Link>
       </div>
 
       {/* Decorative Divider */}
