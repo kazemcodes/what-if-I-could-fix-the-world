@@ -32,6 +32,14 @@ class Settings(BaseSettings):
     api_prefix: str = "/api/v1"
     cors_origins: list[str] = Field(default_factory=lambda: ["http://localhost:3000"])
 
+    @field_validator("cors_origins", mode="before")
+    @classmethod
+    def parse_cors_origins(cls, v):
+        """Parse CORS origins from comma-separated string or list."""
+        if isinstance(v, str):
+            return [origin.strip() for origin in v.split(",") if origin.strip()]
+        return v
+
     # Database - supports both PostgreSQL and SQLite
     # Docker: postgresql+asyncpg://postgres:postgres@localhost:5432/story_ai_studio
     # Non-Docker: sqlite+aiosqlite:///./data/story_ai.db

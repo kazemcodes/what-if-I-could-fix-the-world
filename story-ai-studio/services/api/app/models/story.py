@@ -1,6 +1,6 @@
 """Story database model."""
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Any
 
 from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text, func, JSON
@@ -11,6 +11,7 @@ from app.core.database import Base
 if TYPE_CHECKING:
     from app.models.user import User
     from app.models.character import Character
+    from app.models.location import Location
 
 
 class Story(Base):
@@ -88,6 +89,12 @@ class Story(Base):
     )
     characters: Mapped[list["Character"]] = relationship(
         "Character",
+        back_populates="story",
+        lazy="selectin",
+        cascade="all, delete-orphan",
+    )
+    locations: Mapped[list["Location"]] = relationship(
+        "Location",
         back_populates="story",
         lazy="selectin",
         cascade="all, delete-orphan",

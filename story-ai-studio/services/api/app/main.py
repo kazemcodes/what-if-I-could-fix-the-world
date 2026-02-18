@@ -14,7 +14,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """Application lifespan events."""
     # Startup
     await init_db()
-    yield
+    yield        
     # Shutdown
     await close_db()
 
@@ -42,8 +42,14 @@ def create_app() -> FastAPI:
 
     # Include routers
     from app.routes import auth as auth_routes
+    from app.routes import story as story_routes
+    from app.routes import character as character_routes
+    from app.routes import location as location_routes
 
     app.include_router(auth_routes.router, prefix=settings.api_prefix)
+    app.include_router(story_routes.router, prefix=settings.api_prefix)
+    app.include_router(character_routes.router, prefix=settings.api_prefix)
+    app.include_router(location_routes.router, prefix=settings.api_prefix)
 
     @app.get("/health")
     async def health_check() -> dict:

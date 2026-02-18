@@ -153,44 +153,44 @@ export default function DashboardPage() {
         {/* Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Create Story */}
-          <div className="fantasy-card p-6 hover:border-fantasy-gold transition-colors cursor-pointer">
+          <Link href="/stories/create" className="fantasy-card p-6 hover:border-fantasy-gold transition-colors cursor-pointer block">
             <h3 className="font-cinzel text-xl text-fantasy-gold mb-2">
               📜 Create New Story
             </h3>
             <p className="font-serif text-fantasy-ink/70">
               Start a new adventure with AI-powered storytelling
             </p>
-          </div>
+          </Link>
 
           {/* Browse Worlds */}
-          <div className="fantasy-card p-6 hover:border-fantasy-gold transition-colors cursor-pointer">
+          <Link href="/stories/browse" className="fantasy-card p-6 hover:border-fantasy-gold transition-colors cursor-pointer block">
             <h3 className="font-cinzel text-xl text-fantasy-gold mb-2">
               🗺️ Browse Worlds
             </h3>
             <p className="font-serif text-fantasy-ink/70">
               Explore community-created worlds and campaigns
             </p>
-          </div>
+          </Link>
 
           {/* My Characters */}
-          <div className="fantasy-card p-6 hover:border-fantasy-gold transition-colors cursor-pointer">
+          <Link href="/characters" className="fantasy-card p-6 hover:border-fantasy-gold transition-colors cursor-pointer block">
             <h3 className="font-cinzel text-xl text-fantasy-gold mb-2">
               🧙 My Characters
             </h3>
             <p className="font-serif text-fantasy-ink/70">
               Manage your characters and their stories
             </p>
-          </div>
+          </Link>
 
           {/* Settings */}
-          <div className="fantasy-card p-6 hover:border-fantasy-gold transition-colors cursor-pointer">
+          <Link href="/settings" className="fantasy-card p-6 hover:border-fantasy-gold transition-colors cursor-pointer block">
             <h3 className="font-cinzel text-xl text-fantasy-gold mb-2">
               ⚙️ Settings
             </h3>
             <p className="font-serif text-fantasy-ink/70">
               Customize your experience and manage your account
             </p>
-          </div>
+          </Link>
         </div>
       </main>
     </div>

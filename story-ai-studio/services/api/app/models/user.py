@@ -10,7 +10,6 @@ from app.core.database import Base
 
 if TYPE_CHECKING:
     from app.models.story import Story
-    from app.models.character import Character
 
 
 class User(Base):
@@ -66,11 +65,6 @@ class User(Base):
     stories: Mapped[list["Story"]] = relationship(
         "Story",
         back_populates="author",
-        lazy="selectin",
-    )
-    characters: Mapped[list["Character"]] = relationship(
-        "Character",
-        back_populates="owner",
         lazy="selectin",
     )
 
