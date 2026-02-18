@@ -143,6 +143,12 @@ export default function StoryDetailPage() {
           </Link>
           <div className="flex gap-3">
             <button
+              onClick={() => router.push(`/stories/${story.id}/worldbuilder`)}
+              className="px-6 py-2 bg-gradient-to-r from-purple-700 to-purple-600 rounded-lg text-purple-50 font-serif hover:from-purple-600 hover:to-purple-500 transition-all shadow-lg"
+            >
+              🌍 World Builder
+            </button>
+            <button
               onClick={() => router.push(`/stories/${story.id}/play`)}
               className="px-6 py-2 bg-gradient-to-r from-green-700 to-green-600 rounded-lg text-green-50 font-serif hover:from-green-600 hover:to-green-500 transition-all shadow-lg"
             >

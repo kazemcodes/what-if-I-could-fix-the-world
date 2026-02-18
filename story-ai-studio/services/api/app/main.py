@@ -45,11 +45,13 @@ def create_app() -> FastAPI:
     from app.routes import story as story_routes
     from app.routes import character as character_routes
     from app.routes import location as location_routes
+    from app.routes import session as session_routes
 
     app.include_router(auth_routes.router, prefix=settings.api_prefix)
     app.include_router(story_routes.router, prefix=settings.api_prefix)
     app.include_router(character_routes.router, prefix=settings.api_prefix)
     app.include_router(location_routes.router, prefix=settings.api_prefix)
+    app.include_router(session_routes.router, prefix=settings.api_prefix)
 
     @app.get("/health")
     async def health_check() -> dict:
